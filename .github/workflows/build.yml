@@ -16,6 +16,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Verify buildozer.spec exists
+        run: |
+          if [ ! -f buildozer.spec ]; then
+            echo "Error: buildozer.spec not found!"
+            exit 1
+          fi
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -35,10 +42,10 @@ jobs:
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
           unzip commandlinetools-linux-9477386_latest.zip
           mv cmdline-tools latest
-          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$PATH
           echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
           echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
+          echo "PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$PATH" >> $GITHUB_ENV
 
       - name: Install Android Build Tools (including AIDL)
         run: |
@@ -52,6 +59,14 @@ jobs:
             echo "Error: AIDL not found!"
             exit 1
           fi
+      
+      - name: Verify sdkmanager Installation
+        run: |
+          if [ ! -f "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]; then
+            echo "Error: sdkmanager not found!"
+            exit 1
+          fi
+          sdkmanager --list
 
       - name: Set up virtual environment
         run: |
@@ -59,13 +74,6 @@ jobs:
           source venv/bin/activate
           pip install --upgrade pip setuptools wheel
           pip install buildozer cython
-
-      - name: Verify buildozer.spec exists
-        run: |
-          if [ ! -f buildozer.spec ]; then
-            echo "Error: buildozer.spec not found!"
-            exit 1
-          fi
 
       - name: Build APK
         run: |
