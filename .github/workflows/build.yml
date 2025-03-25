@@ -94,28 +94,42 @@ jobs:
         run: |
           rm -rf .buildozer/android/platform/android-ndk-*
 
-      - name: Set up virtual environment
+      - name: Set up virtual environment and install Buildozer
         run: |
           python3 -m venv venv
           source venv/bin/activate
           pip install --upgrade pip setuptools wheel
           pip install buildozer cython
 
+      - name: Run Buildozer Initialization
+        run: |
+          source venv/bin/activate
+          mkdir -p .buildozer/android/platform
+          buildozer android update || true
+
       - name: Run Autoupdate
         run: |
-          mkdir -p $GITHUB_WORKSPACE/.buildozer/android/platform
-          buildozer android update || true
-          cd $GITHUB_WORKSPACE/.buildozer/android/platform/python-for-android
-          autoupdate || true
+          source venv/bin/activate
+          if [ -d ".buildozer/android/platform/python-for-android" ]; then
+            cd .buildozer/android/platform/python-for-android
+            autoupdate || true
+          else
+            echo "Skipping autoupdate: python-for-android directory does not exist."
+          fi
 
       - name: Fix Libtool Configuration
         run: |
-          cd $GITHUB_WORKSPACE/.buildozer/android/platform/python-for-android
-          libtoolize --force
-          aclocal
-          autoconf
-          autoheader
-          automake --add-missing --force-missing
+          source venv/bin/activate
+          if [ -d ".buildozer/android/platform/python-for-android" ]; then
+            cd .buildozer/android/platform/python-for-android
+            libtoolize --force
+            aclocal
+            autoconf
+            autoheader
+            automake --add-missing --force-missing
+          else
+            echo "Skipping libtool configuration: python-for-android directory does not exist."
+          fi
 
       - name: Build APK
         run: |
