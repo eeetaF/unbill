@@ -72,6 +72,10 @@ jobs:
             exit 1
           fi
           sdkmanager --list
+      
+      - name: Remove old NDK versions
+        run: |
+          rm -rf $ANDROID_HOME/ndk/*
 
       - name: Install Android NDK
         run: |
@@ -79,6 +83,10 @@ jobs:
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/25.1.8937393" >> $GITHUB_ENV
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/25.1.8937393" >> $HOME/.bashrc
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/25.1.8937393" >> $HOME/.profile
+      
+      - name: Clean Buildozer Cache
+        run: |
+          rm -rf .buildozer/android/platform/android-ndk-*
 
       - name: Set up virtual environment
         run: |
