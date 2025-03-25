@@ -76,13 +76,18 @@ jobs:
       - name: Remove old NDK versions
         run: |
           rm -rf $ANDROID_HOME/ndk/*
+          rm -rf $HOME/.buildozer/android/platform/android-ndk-*
+          rm -rf $HOME/.buildozer/android/platform/android-ndk-r23b
 
       - name: Install Android NDK
         run: |
           sdkmanager --install "ndk;25.1.8937393"
-          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/25.1.8937393" >> $GITHUB_ENV
-          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/25.1.8937393" >> $HOME/.bashrc
-          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/25.1.8937393" >> $HOME/.profile
+          export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/25.1.8937393
+          export ANDROID_NDK_ROOT=$ANDROID_NDK_HOME
+          echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=$ANDROID_NDK_HOME" >> $GITHUB_ENV
+          echo "export ANDROID_NDK_HOME=$ANDROID_NDK_HOME" >> $HOME/.bashrc
+          echo "export ANDROID_NDK_ROOT=$ANDROID_NDK_HOME" >> $HOME/.bashrc
       
       - name: Clean Buildozer Cache
         run: |
