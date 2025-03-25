@@ -123,10 +123,14 @@ jobs:
           if [ -d ".buildozer/android/platform/python-for-android" ]; then
             cd .buildozer/android/platform/python-for-android
             libtoolize --force
-            aclocal
-            autoconf
-            autoheader
-            automake --add-missing --force-missing
+            if [ -f "configure.ac" ]; then
+              aclocal
+              autoconf
+              autoheader
+              automake --add-missing --force-missing
+            else
+              echo "Skipping aclocal: configure.ac not found."
+            fi
           else
             echo "Skipping libtool configuration: python-for-android directory does not exist."
           fi
