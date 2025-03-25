@@ -101,11 +101,6 @@ jobs:
           pip install --upgrade pip setuptools wheel
           pip install buildozer cython
 
-      - name: Fix Autoconf Macros
-        run: |
-          cd $GITHUB_WORKSPACE/.buildozer/android/platform/python-for-android
-          autoupdate
-
       - name: Build APK
         run: |
           source venv/bin/activate
