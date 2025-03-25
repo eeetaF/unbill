@@ -101,6 +101,20 @@ jobs:
           pip install --upgrade pip setuptools wheel
           pip install buildozer cython
 
+      - name: Run Autoupdate
+        run: |
+          cd $GITHUB_WORKSPACE/.buildozer/android/platform/python-for-android
+          autoupdate || true
+
+      - name: Fix Libtool Configuration
+        run: |
+          cd $GITHUB_WORKSPACE/.buildozer/android/platform/python-for-android
+          libtoolize --force
+          aclocal
+          autoconf
+          autoheader
+          automake --add-missing --force-missing
+
       - name: Build APK
         run: |
           source venv/bin/activate
