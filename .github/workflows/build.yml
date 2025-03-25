@@ -32,6 +32,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y python3-pip python3-venv git openjdk-17-jdk unzip
+          sudo apt install -y autoconf automake libtool m4
 
       - name: Set up Android SDK
         run: |
@@ -99,6 +100,11 @@ jobs:
           source venv/bin/activate
           pip install --upgrade pip setuptools wheel
           pip install buildozer cython
+
+      - name: Fix Autoconf Macros
+        run: |
+          cd $GITHUB_WORKSPACE/.buildozer/android/platform/python-for-android
+          autoupdate
 
       - name: Build APK
         run: |

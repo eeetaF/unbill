@@ -23,6 +23,7 @@ fullscreen = 0
 android.api = 31
 android.minapi = 21
 android.ndk = 25b
+android.ndk_api = 24
 android.archs = arm64-v8a, armeabi-v7a
 
 # Permissions required by Plyer filechooser
