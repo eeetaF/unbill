@@ -33,6 +33,7 @@ jobs:
           sudo apt update
           sudo apt install -y python3-pip python3-venv git openjdk-17-jdk unzip
           sudo apt install -y autoconf automake libtool m4
+          sudo apt install build-essential libltdl-dev libffi-dev libssl-dev
 
       - name: Set up Android SDK
         run: |
