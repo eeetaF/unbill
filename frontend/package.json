@@ -1,0 +1,14 @@
+{
+  "name": "unbill",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc", 
+    "start": "npm run build && live-server public"  
+  },
+  "devDependencies": {
+    "typescript": "^4.x.x"
+  },
+  "dependencies": {
+    "live-server": "^1.2.x" 
+  }
+}

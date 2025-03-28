@@ -1,8 +1,8 @@
-async function uploadFile() {
-    const fileInput = document.getElementById('fileInput');
-    const statusDiv = document.getElementById('status');
+async function uploadFile(): Promise<void> {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    const statusDiv = document.getElementById('status') as HTMLElement;
     
-    if (!fileInput.files[0]) {
+    if (!fileInput.files || fileInput.files.length === 0) {
         statusDiv.textContent = "Выберите файл!";
         return;
     }
@@ -24,6 +24,10 @@ async function uploadFile() {
         statusDiv.textContent = `Успех: ${result.message}`;
         
     } catch (error) {
-        statusDiv.textContent = `Ошибка: ${error.message}`;
+        if (error instanceof Error) {
+            statusDiv.textContent = `Ошибка: ${error.message}`;
+        } else {
+            statusDiv.textContent = 'Неизвестная ошибка';
+        }
     }
 }
