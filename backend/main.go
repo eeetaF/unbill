@@ -1,11 +1,11 @@
 package main
 
 import (
-	"backend/init"
+	"backend/initialization"
 	"backend/server"
 )
 
 func main() {
-	init.InitializeApp()
+	initialization.InitializeApp()
 	server.Expose()
 }
