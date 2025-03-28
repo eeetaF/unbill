@@ -16,6 +16,5 @@ func InitializeApp() {
 		log.Fatalf("Cannot initialize program: InitKey: %v", err)
 	}
 
-	go vacuum_cleaner.AutoClearOldFiles(
-		GetConfig().DataDir, GetConfig().MaxAge, max(GetConfig().MaxAge/24, time.Second))
+	go vacuum_cleaner.AutoClearOldFiles(GetConfig().MaxAge, max(GetConfig().MaxAge/24, time.Second))
 }

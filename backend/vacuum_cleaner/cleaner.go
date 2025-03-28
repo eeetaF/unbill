@@ -5,9 +5,12 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	runtime_data "backend/runtime-data"
 )
 
-func AutoClearOldFiles(dir string, maxAge time.Duration, interval time.Duration) {
+func AutoClearOldFiles(maxAge time.Duration, interval time.Duration) {
+	dir := runtime_data.GetConfig().DataDir
 	for {
 		files, err := os.ReadDir(dir)
 		if err != nil {
