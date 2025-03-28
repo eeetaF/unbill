@@ -1,11 +1,11 @@
 package main
 
 import (
-	runtime_data "backend/runtime-data"
+	"backend/init"
 	"backend/server"
 )
 
 func main() {
-	runtime_data.InitializeApp()
+	init.InitializeApp()
 	server.Expose()
 }
