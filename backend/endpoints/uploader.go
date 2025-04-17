@@ -1,6 +1,8 @@
 package endpoints
 
 import (
+	"backend/models"
+	"backend/splitter"
 	"bytes"
 	"crypto/hmac"
 	"crypto/sha256"
@@ -14,13 +16,16 @@ import (
 	"image/png"
 	"io/ioutil"
 	"math"
+	"net"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/nfnt/resize"
 	"golang.org/x/image/bmp"
 
-	"backend/runtime-data"
+	"backend/config"
 )
 
 type UploadRequest struct {
@@ -29,16 +34,13 @@ type UploadRequest struct {
 }
 
 type UploadResponse struct {
-	Filename string `json:"filename"`
+	Filename     string               `json:"filename"`
+	ProductUnits []models.ProductUnit `json:"product_units"`
+	TotalPrice   int64                `json:"total_price"`
 }
 
-// POST /upload
+// Uploader POST /api/upload_and_analyze
 func Uploader(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		WriteJSON(w, http.StatusMethodNotAllowed, "Method not allowed")
-		return
-	}
-
 	req := &UploadRequest{}
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		WriteJSON(w, http.StatusBadRequest, "Invalid JSON body")
@@ -51,7 +53,15 @@ func Uploader(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	OK(w, UploadResponse{Filename: filename})
+	totalPrice, productUnits, err := getOcrAns(filename)
+	if err != nil {
+		WriteJSON(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	splitter.SaveInitialSplitData(filename, &productUnits)
+
+	OK(w, UploadResponse{Filename: filename, ProductUnits: productUnits, TotalPrice: totalPrice})
 }
 
 func uploadFile(req *UploadRequest) (string, error) {
@@ -104,9 +114,9 @@ func uploadFile(req *UploadRequest) (string, error) {
 		data = buf.Bytes()
 	}
 
-	filename := generateFilename(runtime_data.GetConfig().GetKey(), time.Now(), req.Ext)
+	filename := generateFilename(config.GetConfig().GetKey(), time.Now(), req.Ext)
 
-	if err = ioutil.WriteFile(runtime_data.GetConfig().DataDir+filename, data, 0644); err != nil {
+	if err = ioutil.WriteFile(config.GetConfig().DataSharedDir+filename, data, 0644); err != nil {
 		return "", err
 	}
 
@@ -131,4 +141,43 @@ func generateFilename(secret []byte, t time.Time, ext string) string {
 	hash := h.Sum(nil)
 	encoded := hex.EncodeToString(hash)
 	return fmt.Sprintf("%s.%s", encoded, ext)
+}
+
+func getOcrAns(filename string) (int64, []models.ProductUnit, error) {
+	conn, err := net.Dial("tcp", "localhost:8082")
+	if err != nil {
+		return 0, nil, err
+	}
+	defer conn.Close()
+
+	if _, err = conn.Write([]byte(filename)); err != nil {
+		return 0, nil, err
+	}
+
+	buf := make([]byte, 4096)
+	n, err := conn.Read(buf)
+	if err != nil {
+		return 0, nil, err
+	}
+	fmt.Println()
+	fmt.Println(string(buf[:n]))
+	fmt.Println()
+
+	lines := strings.Split(string(buf[:n]), "\n")
+	result := make([]models.ProductUnit, 0, len(lines))
+	var totalCost int64
+
+	for i := 0; i < len(lines); i++ {
+		line := lines[i]
+		fields := strings.Split(line, "|")
+		if len(fields) != 3 {
+			continue
+		}
+		quant, _ := strconv.Atoi(fields[1])
+		price, _ := strconv.ParseInt(fields[2], 10, 64)
+		totalCost += price
+		result = append(result, models.ProductUnit{ID: len(result), Name: fields[0], Quantity: quant, Price: price})
+	}
+
+	return totalCost, result, nil
 }

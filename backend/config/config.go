@@ -1,4 +1,4 @@
-package runtime_data
+package config
 
 import (
 	"crypto/rand"
@@ -11,8 +11,9 @@ import (
 )
 
 type Config struct {
-	MaxAge  time.Duration
-	DataDir string
+	MaxAge        time.Duration
+	DataSharedDir string
+	DataSplitDir  string
 
 	key    []byte
 	loaded bool
@@ -43,8 +44,13 @@ func LoadConfig(path string) error {
 		return err
 	}
 
-	config.DataDir = "data/" + dataDir
-	if err = ensureDataDir(config.DataDir); err != nil {
+	config.DataSharedDir = "../data_shared/"
+	if err = ensureDataDir(config.DataSharedDir); err != nil {
+		return err
+	}
+
+	config.DataSplitDir = "data_split/"
+	if err = ensureDataDir(config.DataSplitDir); err != nil {
 		return err
 	}
 

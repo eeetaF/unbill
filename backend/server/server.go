@@ -25,7 +25,8 @@ func Expose() {
 		}
 	})
 
-	mux.HandleFunc("/api/upload", endpoints.Uploader)
+	mux.HandleFunc("POST /api/upload_and_analyze", endpoints.Uploader)
+	mux.HandleFunc("GET /api/split_equally/{filename}/{num_people}", endpoints.EvenSplitter)
 
 	// CORS
 	c := cors.New(cors.Options{

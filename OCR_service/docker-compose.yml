@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  ocr_service:
+    build: .
+    ports:
+      - "8082:8082"
+    volumes:
+      - ../data_shared:/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all

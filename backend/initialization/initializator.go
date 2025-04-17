@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	data "backend/runtime-data"
+	data "backend/config"
 	"backend/vacuum_cleaner"
 )
 
