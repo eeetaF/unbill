@@ -4,7 +4,16 @@
 
 ---
 
-## Why to use unbill (rename this section pls)
+## What makes UnBill different
+
+- **Fast and intuitive** - Telegram bot provides a smooth and interactive bill-splitting experience without the need to install extra apps  
+- **Smart receipt processing** - Integrated OCR and NLP modules analyze complex restaurant bills with high accuracy
+- **Flexible splitting options** - Supports equal, item-based, and custom logic splitting tailored to real-world scenarios
+- **Collaborative editing** - All participants can review and adjust the bill in real time
+- **Secure and extendable** - Dockerized backend, clean API, optional third-party NLP integrations  
+
+ ### Built for real-life messiness - from shared desserts to chaotic receipts
+
 
 ## Stack
 Every microservice runs in **docker** container.
@@ -106,7 +115,7 @@ shared directory among all containers (pictures of bills for backend and OCR_ser
 
 - ### Telebot / TODO
 
-## Why unbill is safe to use
+## Why UnBill is safe to use
 
 Even though all data about bills (including pictures and analyzed data) is located in the same directory, which means any user can make a request on any other's bill, it's impossible to guess the name of the file. 
 
