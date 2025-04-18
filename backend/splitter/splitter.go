@@ -1,13 +1,14 @@
 package splitter
 
 import (
-	"backend/config"
-	"backend/models"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+
+	"backend/config"
+	"backend/models"
 )
 
 type Person struct {
@@ -30,7 +31,7 @@ func EvenSplit(filename string, numPeople int) (int64, error) {
 
 	var splitData SplitData
 	decoder := json.NewDecoder(file)
-	if err := decoder.Decode(&splitData); err != nil {
+	if err = decoder.Decode(&splitData); err != nil {
 		return 0, err
 	}
 	var totalPrice int64
