@@ -1,6 +1,6 @@
 # We make splitting bills easy!
 
-![Unbill logo[product-screenshot]](logo.jpg)
+![Unbill logo[]](logo.jpg)
 
 ---
 
