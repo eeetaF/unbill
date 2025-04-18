@@ -1,0 +1,8 @@
+services:
+  unbill_backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../data_shared:/data_shared
+    working_dir: /app
