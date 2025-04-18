@@ -18,7 +18,7 @@
 ## Stack
 Every microservice runs in **docker** container.
 - ### Frontend
-**Python**, telebot TODO
+**Python**, telegram library
 - ### Backend
 **Go**, http standard package
 - ### OCR and NLP service
@@ -93,7 +93,8 @@ Response body:
 
 ## How to use
 
-run script (я его еще не сделал)
+TODO...
+for now, use docker-composes.yml )
 
 ## Project structure
 - ### backend /
@@ -113,7 +114,8 @@ other source directories...
 - ### data_shared /
 shared directory among all containers (pictures of bills for backend and OCR_service communication)
 
-- ### Telebot / TODO
+- ### python /
+telebot source
 
 ## Why UnBill is safe to use
 
