@@ -9,59 +9,48 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strconv"
 )
 
-type productsPatcherRequest struct {
+type productsPutterRequest struct {
 	UpdatedProducts []models.ProductUnit `json:"products"`
 }
-type productsPatcherResponse struct {
+type productsPutterResponse struct {
 	ProductUnits []models.ProductUnit `json:"product_units"`
 	TotalPrice   int64                `json:"total_price"`
 }
 
-// ProductsPatcher PATCH /api/products/{filename}
-func ProductsPatcher(w http.ResponseWriter, r *http.Request) {
+// ProductsPutter PUT /api/products/{filename}
+func ProductsPutter(w http.ResponseWriter, r *http.Request) {
 	filename := r.PathValue("filename")
 
-	req := &productsPatcherRequest{}
+	req := &productsPutterRequest{}
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		WriteJSON(w, http.StatusBadRequest, "Invalid JSON body")
 		return
 	}
 
-	products, price, err := patchProducts(filename, &req.UpdatedProducts)
+	price, err := putProducts(filename, &req.UpdatedProducts)
 	if err != nil {
 		WriteJSON(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	OK(w, productsPatcherResponse{ProductUnits: products, TotalPrice: price})
+	OK(w, productsPutterResponse{ProductUnits: req.UpdatedProducts, TotalPrice: price})
 }
 
-func patchProducts(filename string, updatedProducts *[]models.ProductUnit) ([]models.ProductUnit, int64, error) {
+func putProducts(filename string, updatedProducts *[]models.ProductUnit) (int64, error) {
 	filePath := filepath.Join(config.GetConfig().DataSplitDir, fmt.Sprintf("%s.json", filename))
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, 0, err
+		return 0, err
 	}
-	defer file.Close()
+	file.Close()
 
-	var splitData splitter.SplitData
-	decoder := json.NewDecoder(file)
-	if err = decoder.Decode(&splitData); err != nil {
-		return nil, 0, err
-	}
+	splitter.SaveInitialSplitData(filename, updatedProducts)
 
-	products := splitData.Products
-	for _, updatedProduct := range *updatedProducts {
-		// this is not the best implementation. Change data struct to make this operation in O(1) instead O(n)
-		for i, product := range products {
-			if product.ID == updatedProduct.ID {
-				products[i] = updatedProduct
-				break
-			}
-		}
+	var totalPrice int64
+	for _, product := range *updatedProducts {
+		totalPrice += product.Price
 	}
-	return products
+	return totalPrice, nil
 }

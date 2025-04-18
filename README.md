@@ -51,6 +51,36 @@ Response body:
   "total_per_person": 1300
 }
 ```
+- ### `PUT /api/products/{filename}`
+**Updates info about products in filename**
+
+Request body:
+```json
+{
+  "product_units": [
+    {
+      "id": 0,
+      "name": "product",
+      "quantity": 1,
+      "price": 400
+    }
+  ],
+}
+```
+Response body:
+```json
+{
+  "product_units": [
+    {
+      "id": 0,
+      "name": "product",
+      "quantity": 1,
+      "price": 400
+    }
+  ],
+  "total_price": 400
+}
+```
 
 ## How to use
 
