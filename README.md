@@ -9,7 +9,7 @@
 ## Stack
 Every microservice runs in **docker** container.
 - ### Frontend
-**Python**, telebot
+**Python**, telebot TODO
 - ### Backend
 **Go**, http standard package
 - ### OCR and NLP service
@@ -62,6 +62,8 @@ run script (я его еще не сделал)
 
 | main.go (entry point)
 
+| docker-compose.yml, Dockerfile
+
 other source directories...
 
 - ### OCR_service /
@@ -72,7 +74,7 @@ other source directories...
 - ### data_shared /
 shared directory among all containers (pictures of bills for backend and OCR_service communication)
 
-- ### Telebot / ?
+- ### Telebot / TODO
 
 ## Why unbill is safe to use
 
